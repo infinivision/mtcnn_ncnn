@@ -31,12 +31,16 @@ make
 ```
 
 # how to run
-## test images
+## test picture
 ```sh
 cd bin
-
+./test_picture ../models/ncnn/ ../images/1.jpg
 ```
 ## test video
+```sh
+cd bin
+./test_video ../models/ncnn 0
+```
 
 # benchmark
 ```sh

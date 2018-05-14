@@ -5,41 +5,44 @@
 
 
 int test_picture(int argc, char** argv) {
-	std::string model_path = argv[1];
-	MTCNN mm(model_path);
-
-	std::cout << "after load model..." << std::endl;
-	clock_t start_time = clock();
-
-	cv::Mat image;
-    std::string image_path = argv[2];
-	image = cv::imread(image_path);
-	ncnn::Mat ncnn_img = ncnn::Mat::from_pixels(image.data, ncnn::Mat::PIXEL_BGR2RGB, image.cols, image.rows);
-	std::vector<Bbox> finalBbox;
-	mm.detect(ncnn_img, finalBbox);
-
-	const int num_box = finalBbox.size();
-	cout << "num_box: " << num_box << endl;
-	std::vector<cv::Rect> bbox;
-	bbox.resize(num_box);
-	for (int i = 0; i < num_box; i++) {
-		bbox[i] = cv::Rect(finalBbox[i].x1, finalBbox[i].y1, finalBbox[i].x2 - finalBbox[i].x1 + 1, finalBbox[i].y2 - finalBbox[i].y1 + 1);
-
-	}
-	for (vector<cv::Rect>::iterator it = bbox.begin(); it != bbox.end(); it++) {
-		rectangle(image, (*it), cv::Scalar(0, 0, 255), 2, 8, 0);
+	if(argc != 3) {
+		std::cout << "usage: test_picture $model_path $image_path" << std::endl;
+		exit(1); 
 	}
 
-	std::cout << "bbox size: " << bbox.size() << std::endl;
+    std::string model_path = argv[1];
+    std::string imagepath = argv[2];
+    cv::Mat cv_img = cv::imread(imagepath, CV_LOAD_IMAGE_COLOR);
+    if (cv_img.empty())
+    {
+        std::cerr << "cv::Imread failed. File Path: " << imagepath << std::endl;
+        return -1;
+    }
+    std::vector<Bbox> finalBbox;
+    MTCNN mm(model_path);
 
-	exit(0);
-	imshow("face_detection", image);
-	clock_t finish_time = clock();
-	double total_time = (double)(finish_time - start_time) / CLOCKS_PER_SEC;
-	std::cout << "time" << total_time * 1000 << "ms" << std::endl;
+    // exit(0);
+    ncnn::Mat ncnn_img = ncnn::Mat::from_pixels(cv_img.data, ncnn::Mat::PIXEL_BGR2RGB, cv_img.cols, cv_img.rows);
+    struct timeval  tv1,tv2;
+    struct timezone tz1,tz2;
 
-	cv::waitKey(0);
-
+    gettimeofday(&tv1,&tz1);
+    mm.detect(ncnn_img, finalBbox);
+    gettimeofday(&tv2,&tz2);
+    int total = 0;
+    for(vector<Bbox>::iterator it=finalBbox.begin(); it!=finalBbox.end();it++) {
+    	if((*it).exist) {
+            total++;
+            cv::rectangle(cv_img, cv::Point((*it).x1, (*it).y1), cv::Point((*it).x2, (*it).y2), cv::Scalar(0,0,255), 2,8,0);
+            for(int num=0;num<5;num++) {
+                circle(cv_img, cv::Point((int)*(it->ppoint+num), (int)*(it->ppoint+num+5)), 3, cv::Scalar(0,255,255), -1);
+            }
+        }
+    }
+    std::cout << "detected " << total << " Persons. time eclipsed: " <<  getElapse(&tv1, &tv2) << " ms" << std::endl;
+    cv::namedWindow("face_detection", cv::WINDOW_AUTOSIZE);
+    imshow("face_detection", cv_img);
+    cv::waitKey(0);
 }
 
 int main(int argc, char* argv[]) {

@@ -34,15 +34,13 @@ endif (NOT OpenCV_FOUND)
 message(STATUS "CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
 message(STATUS "CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
 include_directories(${OpenCV_INCLUDE_DIRS})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../src)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../build/src)
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/../src)
+include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR}/include/ncnn)
+
 
 link_directories(
   ${OpenCV_Install}/lib
-  ${PROJECT_SOURCE_DIR}/3rdparty/lib
-  ${CMAKE_CURRENT_SOURCE_DIR}/../build/src
+  ${PROJECT_SOURCE_DIR}/lib/ncnn
 )
 
 add_executable(main src/main.cpp src/utils.cpp src/mtcnn.cpp)

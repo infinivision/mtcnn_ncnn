@@ -4,7 +4,11 @@
 #include "utils.h"
 #include "mtcnn.h"
 
-void benchmark(int arc, char** argv) {
+void benchmark(int argc, char** argv) {
+    if(argc != 3) {
+		std::cout << "usage: benchmark $model_path $image_folder" << std::endl;
+		exit(1); 
+	}
     std::string model_path = argv[1];
     std::string folder_path = argv[2];
     std::vector<string> file_list;
