@@ -51,6 +51,7 @@ cd bin
 ## test result on mac os x86 platform
 
 ## test result on firefly 3399 ARM CPU(without NEON optimation)
+total images: 3226	detected 2084	min time: 15.173	max: 4463.3	avg: 301.302	ms
 
 ## test result on firefly 3399 ARM CPU(with NEON optimation)
 
