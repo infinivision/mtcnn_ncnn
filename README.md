@@ -43,17 +43,21 @@ cd bin
 ```
 
 # benchmark
+## Test data
+we use the [WIDER FACE validate dataset](http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/) as the test data
+
+## run benchmark
 ```sh
-# we use the [WIDER FACE validate dataset](http://mmlab.ie.cuhk.edu.hk/projects/WIDERFace/) as the test data
 cd bin
 ./benchmark ../models/ncnn ../images
 ```
-## test result on mac os x86 platform
 
-## test result on firefly 3399 ARM CPU(without NEON optimation)
-total images: 3226	detected 2084	min time: 15.173	max: 4463.3	avg: 301.302	ms
+## Test Result
+| Platform   | CPU Cores |  Memory  |  total images |   detected   |  min time(ms) | max time(ms) | avg time(ms) |
+| --------   | :-----:    | :----:   | :----:        |    :----:    |    :----:  | :----:    | :----:    |
+| MacOS Sierra | 8    |   16GB  |   3226     |  2073     |   8.135    |   370.677    |   51.99      |
+| firefly 3399 | 6    |   2GB     |   3226       |   2084      |   15.173     |   4463.3    |    301.3    |
 
-## test result on firefly 3399 ARM CPU(with NEON optimation)
 
 # known issues
 * ARM NEON optimation still not work
