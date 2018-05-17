@@ -3,6 +3,17 @@
 #include "utils.h"
 #include "mtcnn.h"
 
+void image_show(int argc, char* argv[]) {
+    std::string imagepath = argv[1];
+    cv::Mat cv_img = cv::imread(imagepath, CV_LOAD_IMAGE_COLOR);
+    cv::namedWindow("face_detection", cv::WINDOW_NORMAL);
+    std::cout << "cols: " << cv_img.cols << "\trows: " << cv_img.rows << std::endl;
+    resizeWindow("face_detection", cv_img.cols/2, cv_img.rows/2);
+    imshow("face_detection", cv_img);
+    
+    cv::waitKey(0);    
+}
+
 int main(int argc, char** argv)
 {
     if(argc != 3) {
@@ -40,7 +51,7 @@ int main(int argc, char** argv)
     }
     std::cout << "detected " << total << " Persons. time eclipsed: " <<  getElapse(&tv1, &tv2) << " ms" << std::endl;
  
-    cv::namedWindow("face_detection", cv::WINDOW_AUTOSIZE);
+    cv::namedWindow("face_detection", cv::WINDOW_NORMAL);
     imshow("face_detection", cv_img);
     cv::waitKey(0);
     return 0;
