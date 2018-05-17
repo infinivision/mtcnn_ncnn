@@ -37,12 +37,7 @@ MTCNN::MTCNN(const std::string& model_path){
 	rnet_.load_model(bin_files[1].c_str());
 	onet_.load_param(param_files[2].c_str());
 	onet_.load_model(bin_files[2].c_str());
-    // pnet_.load_param("det1.param");
-    // pnet_.load_model("det1.bin");
-    // rnet_.load_param("det2.param");
-    // rnet_.load_model("det2.bin");
-    // onet_.load_param("det3.param");
-    // onet_.load_model("det3.bin");
+
 }
 
 
@@ -51,10 +46,6 @@ void MTCNN::generateBbox(ncnn::Mat score, ncnn::Mat location, std::vector<Bbox>&
     int stride = 2;
     int cellsize = 12;
     int count = 0;
-    std::cout << "=====generate Bbox====" << std::endl; 
-    std::cout << "scale: " << scale << " score width: " << score.w << "\theigth: " << score.h << std::endl;
-    std::cout << "score channel 1 total: " << score.channel(1).total() << std::endl;
-    std::cout << "location channel num: " << location.c << "\twidth: " << location.w << "\theigth: " << location.h << std::endl;
     //score p
     float *p = score.channel(1);
     Bbox bbox;
@@ -147,7 +138,6 @@ void MTCNN::refineAndSquareBbox(vector<Bbox> &vecBbox, const int &height, const 
         return;
     }
 
-    std::cout << "====refine and square box====" << std::endl;
     float bbw=0, bbh=0, maxSide=0;
     float h = 0, w = 0;
     float x1=0, y1=0, x2=0, y2=0;
@@ -187,8 +177,10 @@ void MTCNN::refineAndSquareBbox(vector<Bbox> &vecBbox, const int &height, const 
                 (*it).y2 = height - 1;
             }
 
+            #ifdef __DEBUG__
             std::cout << "x1: " << it->x1 << "\tx2: " << it->x2 << "\ty1: " << it->y1 << "\ty2: " << it->y2
              << "\t(x2-x1)= " << it->x2 - it->x1 << "\t(y2-y1)= " << it->y2 - it->y1 << std::endl;
+            #endif
             it->area = (it->x2 - it->x1)*(it->y2 - it->y1);
         }
     }
@@ -207,7 +199,6 @@ void MTCNN::detect(ncnn::Mat& img_, std::vector<Bbox>& finalBbox_){
     img_h = img.h;
     img.substract_mean_normalize(mean_vals, norm_vals);
 
-    std::cout << "image height: " << img_h << "\timage width: " << img_w << std::endl;
     float minl = img_w<img_h?img_w:img_h;
     int MIN_DET_SIZE = 12;
     int minsize = 80;
@@ -223,9 +214,11 @@ void MTCNN::detect(ncnn::Mat& img_, std::vector<Bbox>& finalBbox_){
         factor_count++;
     }
 
+    #ifdef __DEBUG__
     for(std::vector<float>::iterator it=scales_.begin(); it!=scales_.end(); it++) {
         std::cout << *it << std::endl;
     }
+    #endif
 
     orderScore order;
     int count = 0;
@@ -283,12 +276,12 @@ void MTCNN::detect(ncnn::Mat& img_, std::vector<Bbox>& finalBbox_){
             ncnn::Mat score, bbox;
             ex.extract("prob1", score);
             ex.extract("conv5-2", bbox);
-
-            if(score.channel(1)[0]>threshold[1]){
+            // if(score.channel(1)[0]>threshold[1]){
+            if(score[1]>threshold[1]){                
                 for(int channel=0;channel<4;channel++)
-                    it->regreCoord[channel]=bbox.channel(channel)[0];//*(bbox.data+channel*bbox.cstep);
+                    it->regreCoord[channel]=bbox[channel];
                 it->area = (it->x2 - it->x1)*(it->y2 - it->y1);
-                it->score = score.channel(1)[0];//*(score.data+score.cstep);
+                it->score = score[1];//*(score.data+score.cstep);
                 secondBbox_.push_back(*it);
                 order.score = it->score;
                 order.oriOrder = count++;
@@ -320,14 +313,14 @@ void MTCNN::detect(ncnn::Mat& img_, std::vector<Bbox>& finalBbox_){
             ex.extract("prob1", score);
             ex.extract("conv6-2", bbox);
             ex.extract("conv6-3", keyPoint);      
-            if(score.channel(1)[0]>threshold[2]){
+            if(score[1]>threshold[2]){
                 for(int channel=0;channel<4;channel++)
-                    it->regreCoord[channel]=bbox.channel(channel)[0];
+                    it->regreCoord[channel]=bbox[channel];
                 it->area = (it->x2 - it->x1)*(it->y2 - it->y1);
-                it->score = score.channel(1)[0];
+                it->score = score[1];
                 for(int num=0;num<5;num++){
-                    (it->ppoint)[num] = it->x1 + (it->x2 - it->x1)*keyPoint.channel(num)[0];
-                    (it->ppoint)[num+5] = it->y1 + (it->y2 - it->y1)*keyPoint.channel(num+5)[0];
+                    (it->ppoint)[num] = it->x1 + (it->x2 - it->x1)*keyPoint[num];
+                    (it->ppoint)[num+5] = it->y1 + (it->y2 - it->y1)*keyPoint[num+5];
                 }
 
                 thirdBbox_.push_back(*it);
