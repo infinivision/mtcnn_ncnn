@@ -1,6 +1,6 @@
 # MTCNN NCNN Implementation
 -----------------------------
-the application can be run on X86 and ARM platform.
+the application can be run on X86 and ARM platform with Neon optimization.
 
 # How to build
 ## clone the repo
@@ -55,8 +55,10 @@ cd bin
 ## Test Result
 | Platform   | CPU Cores |  Memory  |  total images |   detected   |  min time(ms) | max time(ms) | avg time(ms) |
 | --------   | :-----:    | :----:   | :----:        |    :----:    |    :----:  | :----:    | :----:    |
-| MacOS Sierra | 8    |   16GB  |   3226     |  2073     |   8.135    |   370.677    |   51.99      |
-| firefly 3399 | 6    |   2GB     |   3226       |   2084      |   15.173     |   4463.3    |    301.3    |
+| MacOS Sierra | 8    |   16GB  |   3226     |  2073     |   8.068    |   287.446    |   47.03      |
+| firefly 3399 | 6    |   2GB     |   3226       |   2084      |   25.541     |   4437.42    |    351.578    |
+| firefly 3399(Neon) | 6    |   2GB     |   3226       |   2084      |   10.578     |   1325.09    |   157.908   |
+
 
 
 # known issues
