@@ -19,7 +19,7 @@ git clone --recursive https://github.com/infinivision/mtcnn_ncnn.git
 mkdir -p lib/ncnn
 mkdir -p include/ncnn
 cp 3rdparty/ncnn/build/install/lib/libncnn.a lib/ncnn/
-3rdparty/ncnn/build/install/include/* include/ncnn/
+cp 3rdparty/ncnn/build/install/include/* include/ncnn/
 ```
 
 ## build the mtcnn main repo
@@ -59,7 +59,3 @@ cd bin
 | firefly 3399 | 6    |   2GB     |   3226       |   2084      |   25.541     |   4437.42    |    351.578    |
 | firefly 3399(Neon) | 6    |   2GB     |   3226       |   2084      |   10.578     |   1325.09    |   157.908   |
 
-
-
-# known issues
-* ARM NEON optimation still not work
